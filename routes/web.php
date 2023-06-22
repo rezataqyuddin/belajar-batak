@@ -19,13 +19,17 @@ Route::get('/', function () {
 
 Route::get('/learning', function () {
     return view('learns');
-});
+})->name('introduction');
 
 Route::get('/quiz', function () {
     return view('quiz');
-});
+})->name('quiz');
 
-Route::get('/introduction', function () {
+Route::get('/video', function () {
     return view('intro');
-});
+})->name('learn');
+
+Route::get('/statistik', function () {
+    return view('stats');
+})->name('stats');
 
