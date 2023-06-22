@@ -1,7 +1,7 @@
-    /* ! tailwindcss v3.2.4 | MIT License | https://tailwindcss.com */
-    *,
-    ::after,
-    ::before {
+/* ! tailwindcss v3.2.4 | MIT License | https://tailwindcss.com */
+*,
+::after,
+::before {
     box-sizing: border-box;
     border-width: 0;
     border-style: solid;
@@ -826,10 +826,4 @@ video {
     .lg\:p-8 {
         padding: 2rem;
     }
-}
-
-.batak{
-    border: 10px solid transparent;
-    padding: 15px;
-    border-image: url('../img/pattern.png') 30 round;
 }
