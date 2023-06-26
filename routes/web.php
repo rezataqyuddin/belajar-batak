@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
 
 Route::get('/learning', function () {
     return view('learns');
@@ -32,4 +32,3 @@ Route::get('/video', function () {
 Route::get('/statistik', function () {
     return view('stats');
 })->name('stats');
-
