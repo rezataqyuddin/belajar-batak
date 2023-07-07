@@ -1,6 +1,5 @@
 @extends('layout')
 @section('content')
-
 <div class="flex justify-center">
     <h1 style="font-size:42px">ᯘᯮᯒᯖ᯲ <small>Batak</small></h1>
 </div>
@@ -13,14 +12,23 @@
     <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
         <div class="lg:pr-8 lg:pt-4 mt-5">
             <div class="lg:max-w-lg">
-                <h2 class="text-base font-semibold leading-7 text-indigo-600">Mari Menulis</h2>
-                <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Karakter ᯒ</p>
-                <p class="mt-6 text-lg leading-8 text-gray-600">Tentang Karakter.</p>
+                <h2 class="text-base font-semibold leading-7 text-indigo-600">Let's Writing</h2>
+                Select one of these characters to write.
+                <div class="space-x-1 flex text-sm font-medium">
+                    @foreach ( $data as $chars )
+                    <a href="?huruf={{$chars->class}}" class="w-7 h-7 rounded-full flex items-center justify-center text-slate-500 peer-checked:bg-blue-100 peer-checked:text-slate-900">
+                        {{$chars->class}}
+                    </a>
+                    @endforeach
+                </div>
+                <hr>
+                <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Characters {{ isset($_GET['huruf']) ? $chars->char_name : "" }}</p>
+                <p class="mt-6 text-lg leading-8 text-gray-600">About Characters.</p>
             </div>
         </div>
         <form method="POST" action="" class="">
-            <img src="{{ url('/') }}/img/guideline.png" width=300 height=200 style="position:absolute; opacity:0.3; z-index:-90" />
-            <canvas class="pad ring ring-pink-500 ring-offset-0 rounded-md" height="300" style="border: 1px solid #09765A; background:transparent"></canvas>
+            <img src="{{ url('/') }}/img/chars/{{$chars->image}}" width=500 height=200 style="position:relative; opacity:0.3; " />
+            <canvas class="pad ring ring-pink-500 ring-offset-0 rounded-md" height="300" style="z-index:2;position:absolute; margin-left:-40px; margin-top:50px;"></canvas>
         </form>
     </div>
 </div>

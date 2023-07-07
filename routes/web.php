@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Models\BatakChars;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,8 +26,15 @@ Route::get('/quiz', function () {
     return view('quiz');
 })->name('quiz');
 
-Route::get('/video', function () {
-    return view('intro');
+Route::get('/learn', function () {
+    $data = BatakChars::get();
+
+    if (isset($_GET['huruf'])) {
+        $huruf = $_GET['huruf'];
+        $data = BatakChars::where("class", "=", $huruf)->get();
+    }
+
+    return view('intro', compact('data'));
 })->name('learn');
 
 Route::get('/statistik', function () {

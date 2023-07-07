@@ -14,10 +14,10 @@
                     </svg>
                 </div>
 
-                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Pengenalan</h2>
+                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Introduction</h2>
 
                 <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                    Penjelasan mengenai apa itu Aksara Batak (Surat Batak), Sejarah, bentuk karakter dan penulisan dan diakritik.
+                    Discover the history of writing system of the Batak Script (Surat Batak).
                 </p>
             </div>
 
@@ -34,10 +34,10 @@
                     </svg>
                 </div>
 
-                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Belajar</h2>
+                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Learning</h2>
 
                 <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                    Pelajari tata cara penulisan aksara batak.
+                    Learn how to write each characters with guidance.
                 </p>
             </div>
 
@@ -54,10 +54,10 @@
                     </svg>
                 </div>
 
-                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Latihan</h2>
+                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Training</h2>
 
                 <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                    Latihan menulis aksara batak dengan karakter dan kata-kata dasar.
+                    Train your writing with the help of Artificial Intelligence
                 </p>
             </div>
 
@@ -74,10 +74,10 @@
                     </svg>
                 </div>
 
-                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Statistik</h2>
+                <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">Statistics</h2>
 
                 <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                    Statistik pembelajaran dari user.
+                    Analyze the learning outcomes from the students.
                 </p>
             </div>
         </div>
