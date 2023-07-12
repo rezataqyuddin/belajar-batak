@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BatakChars;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class BatakCharsController extends Controller
@@ -12,7 +13,14 @@ class BatakCharsController extends Controller
      */
     public function index()
     {
-        //
+        $data = new Collection();
+        $data = BatakChars::get();
+
+        if(isset($_GET["huruf"])){
+            
+        }
+
+        return view('intro', compact('data'));
     }
 
     /**
