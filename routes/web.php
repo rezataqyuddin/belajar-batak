@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BatakCharsController;
+use App\Models\BatakChars;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,6 +28,7 @@ Route::get('/quiz', function () {
 })->name('quiz');
 
 Route::get('/learn', [BatakCharsController::class, "index"])->name('learn');
+Route::post('/predict', [BatakCharsController::class, "store"])->name('predict');
 
 Route::get('/statistik', function () {
     return view('stats');

@@ -13,14 +13,15 @@ class BatakCharsController extends Controller
      */
     public function index()
     {
-        $data = new Collection();
+        $guide = new Collection();
         $data = BatakChars::get();
 
-        if(isset($_GET["huruf"])){
-            
+        if (isset($_GET["huruf"])) {
+            $guide = $data->first(function ($item) {
+                return $item->class == $_GET["huruf"];
+            });
         }
-
-        return view('intro', compact('data'));
+        return view('intro', compact('data', 'guide'));
     }
 
     /**
@@ -36,7 +37,15 @@ class BatakCharsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request);
+        
+        $folderPath = "img-upload/";
+        $image_parts = explode(";base64,", $request['signed']);
+        $image_type_aux = explode("image/", $image_parts[0]);
+        $image_type = $image_type_aux[1];
+        $image_base64 = base64_decode($image_parts[1]);
+        $file = $folderPath . uniqid() . '.' . $image_type;
+        file_put_contents($file, $image_base64);
     }
 
     /**

@@ -10,74 +10,103 @@
         </span>
     </a>
     <div class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-        @if(sizeof($data) > 0)
         <div class="lg:pr-8 lg:pt-4 mt-5">
             <div class="lg:max-w-lg">
-                <h2 class="text-base font-semibold leading-7 text-indigo-600">Let's Writing</h2>
-                Select one of these characters to write.
-                <div class="space-x-1 flex text-sm font-medium">
+                <h2 class="text-base font-semibold leading-7 text-indigo-600">Let's Writing<br>
+                    <small>
+                        Select one of these characters to write.
+                    </small>
+                </h2>
+                <hr class="mb-5">
+                <div class="grid gap-4 grid-cols-6 grid-rows-3">
                     @foreach ( $data as $chars )
-                    <a href="?huruf={{$chars->class}}" class="ftext-blue-700 border border-blue-700 hover:bg-blue-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500">
+                    <a href="?huruf={{$chars->class}}" class="text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-purple-300 font-medium rounded-full text-sm px-5 py-2.5 text-center mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
                         {{$chars->unicode}}
                     </a>
                     @endforeach
                 </div>
-                <hr>
-                <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Characters {{ isset($_GET['huruf']) ? $chars->char_name : "" }}</p>
-                <p class="mt-6 text-lg leading-8 text-gray-600">About Characters.</p>
-
             </div>
         </div>
-        <form method="POST" action="" class="">
-            @if(isset($_GET['huruf']))
-                <img src="{{ url('/') }}/img/chars/{{$chars->image}}" width=500 height=200 style="position:relative; opacity:0.3; " />
-            @endif
-            <canvas class="pad ring ring-pink-500 ring-offset-0 rounded-md" height="300" style="z-index:2;position:absolute; margin-left:-40px; margin-top:50px;"></canvas>
-        </form>
-        @else 
-        <div class="lg:pr-8 lg:pt-4 mt-5">
-            <h2>Something went wrong</h2>    
+        <div>
+            <div class="text-right">
+                <button type="button" class="btn btn-default btn-sm" id="undo"><i class="fa fa-undo"></i> Undo</button>
+                <button type="button" class="btn btn-danger btn-sm" id="clear"><i class="fa fa-eraser"></i> Clear</button>
+            </div>
+            <br>
+            <form method="POST" action="{{route('predict')}}">
+                @csrf
+                <div class="wrapper">
+                    <canvas id="signature-pad" class="signature-pad"></canvas>
+                    <div id="data">
+                    </div>
+                </div>
+                <br>
+                <button type="button" class="btn btn-primary btn-sm" id="save-png">Save as PNG</button>
+                <button type="button" class="btn btn-info btn-sm" id="save-jpeg">Save as JPEG</button>
+                <button type="button" class="btn btn-default btn-sm" id="save-svg">Save as SVG</button>
+                <button type="submit">Simpan</button>
+            </form>
+        </div>
     </div>
-        @endif
-    </div>
-</div>
-@endsection
+    @endsection
 
-@section('js')
-<script src="{{ url('/')}}/js/jquery.signaturepad.js"></script>
-<script>
-    (function(window) {
-        var $canvas,
-            onResize = function(event) {
-                $canvas.attr({
-                    height: "300px",
-                    width: "450px"
-                });
-            };
+    @section('js')
+    <style type="text/css">
+        .sigPad {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            height: 260px;
+        }
+    </style><script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+    <script>
+        (function(window) {
+            var $canvas,
+                onResize = function(event) {
+                    $canvas.attr({
+                        height: "300px",
+                        width: "450px"
+                    });
+                };
+        }(this));
 
-        $(document).ready(function() {
-            $canvas = $('canvas');
-            window.addEventListener('orientationchange', onResize, false);
-            window.addEventListener('resize', onResize, false);
-            onResize();
+        var canvas = document.getElementById('signature-pad');
 
-            $('form').signaturePad({
-                drawOnly: true,
-                defaultAction: 'drawIt',
-                validateFields: false,
-                lineWidth: 0,
-                output: null,
-                sigNav: null,
-                name: null,
-                typed: null,
-                clear: 'input[type=reset]',
-                typeIt: null,
-                drawIt: null,
-                typeItDesc: null,
-                drawItDesc: null
-            });
+        // Adjust canvas coordinate space taking into account pixel ratio,
+        // to make it look crisp on mobile devices.
+        // This also causes canvas to be cleared.
+        function resizeCanvas() {
+            // When zoomed out to less than 100%, for some very strange reason,
+            // some browsers report devicePixelRatio as less than 1
+            // and only part of the canvas is cleared then.
+            var ratio = Math.max(window.devicePixelRatio || 1, 1);
+            canvas.width = canvas.offsetWidth * ratio;
+            canvas.height = canvas.offsetHeight * ratio;
+            canvas.getContext("2d").scale(ratio, ratio);
+        }
+
+        window.onresize = resizeCanvas;
+        resizeCanvas();
+
+        var signaturePad = new SignaturePad(canvas, {
+            backgroundColor: 'rgb(255, 255, 255)' // necessary for saving image as JPEG; can be removed is only saving as PNG or SVG
         });
-    }(this));
-</script>
-<script src="{{ url('/')}}/js/json2.min.js"></script>
-@endsection
+
+        document.getElementById('save-jpeg').addEventListener('click', function() {
+            if (signaturePad.isEmpty()) {
+                alert("Tanda Tangan Anda Kosong! Silahkan tanda tangan terlebih dahulu.");
+            } else {
+                var data = signaturePad.toDataURL('image/jpeg');
+                console.log(data);
+                $('#data').html('<h4>Format .JPEG</h4><img src="'+data+'"><textarea id="signature64" name="signed" style="display:none">'+data+'</textarea>');
+            }
+        });
+
+        
+        document.getElementById('clear').addEventListener('click', function() {
+            signaturePad.clear();
+        });
+
+    </script>
+    <script src="{{ url('/')}}/js/json2.min.js"></script>
+    @endsection
