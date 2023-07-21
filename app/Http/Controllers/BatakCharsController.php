@@ -73,7 +73,7 @@ class BatakCharsController extends Controller
         $filename = uniqid() . '.' . "jpg";
         $file = $folderPath . $filename;
 
-        Storage::disk('local')->put($file);
+        Storage::disk('local')->put($file,$image_base64);
 
         return array($file, $filename);
     }
