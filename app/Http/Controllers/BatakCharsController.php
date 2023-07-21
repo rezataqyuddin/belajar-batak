@@ -57,7 +57,7 @@ class BatakCharsController extends Controller
                     'name'     => 'image',
                     'filename' => $file[1],
                     'Mime-Type' => "image/jpeg",
-                    'contents' => fopen(url("/".$file[0]), 'r'),
+                    'contents' => fopen(asset("/storage/img-uploads/".$file[0]), 'r'),
                 ],
             ]
         ]);
@@ -67,7 +67,7 @@ class BatakCharsController extends Controller
 
     public function store_image($imagedata)
     {
-        $folderPath = "img-uploads/";
+        $folderPath = "storage/img-uploads/";
         $image_parts = explode(";base64,", $imagedata);
         $image_base64 = base64_decode($image_parts[1]);
         $filename = uniqid() . '.' . "jpg";
