@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\BatakChars;
+use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BatakCharsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
         $guide = new Collection();
@@ -37,15 +40,42 @@ class BatakCharsController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
-        
-        $folderPath = "img-upload/";
-        $image_parts = explode(";base64,", $request['signed']);
-        $image_type_aux = explode("image/", $image_parts[0]);
-        $image_type = $image_type_aux[1];
+        $file = $this->store_image($request['signed']);
+        return $this->predict($file);
+    }
+
+    public function predict($file)
+    {
+        // dd($file);
+
+        $url = "localhost:8000/predict/image";
+        $client = new Client();
+
+        $response = $client->post($url, [
+            'multipart' => [
+                [
+                    'name'     => 'image',
+                    'filename' => $file[1],
+                    'Mime-Type' => "image/jpeg",
+                    'contents' => fopen(url("/".$file[0]), 'r'),
+                ],
+            ]
+        ]);
+
+        return $response;
+    }
+
+    public function store_image($imagedata)
+    {
+        $folderPath = "img-uploads/";
+        $image_parts = explode(";base64,", $imagedata);
         $image_base64 = base64_decode($image_parts[1]);
-        $file = $folderPath . uniqid() . '.' . $image_type;
-        file_put_contents($file, $image_base64);
+        $filename = uniqid() . '.' . "jpg";
+        $file = $folderPath . $filename;
+
+        Storage::disk('local')->put($file);
+
+        return array($file, $filename);
     }
 
     /**

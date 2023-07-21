@@ -29,8 +29,7 @@
         </div>
         <div>
             <div class="text-right">
-                <button type="button" class="btn btn-default btn-sm" id="undo"><i class="fa fa-undo"></i> Undo</button>
-                <button type="button" class="btn btn-danger btn-sm" id="clear"><i class="fa fa-eraser"></i> Clear</button>
+                <button type="button" class="btn btn-danger btn-sm" id="clear"><i class="fa fa-eraser"></i>Clear</button>
             </div>
             <br>
             <form method="POST" action="{{route('predict')}}">
@@ -41,9 +40,7 @@
                     </div>
                 </div>
                 <br>
-                <button type="button" class="btn btn-primary btn-sm" id="save-png">Save as PNG</button>
-                <button type="button" class="btn btn-info btn-sm" id="save-jpeg">Save as JPEG</button>
-                <button type="button" class="btn btn-default btn-sm" id="save-svg">Save as SVG</button>
+                <button type="button" class="btn btn-info btn-sm" id="save-jpeg">Prepare</button>
                 <button type="submit">Simpan</button>
             </form>
         </div>
@@ -58,18 +55,9 @@
             width: 100%;
             height: 260px;
         }
-    </style><script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
     <script>
-        (function(window) {
-            var $canvas,
-                onResize = function(event) {
-                    $canvas.attr({
-                        height: "300px",
-                        width: "450px"
-                    });
-                };
-        }(this));
-
         var canvas = document.getElementById('signature-pad');
 
         // Adjust canvas coordinate space taking into account pixel ratio,
@@ -89,7 +77,7 @@
         resizeCanvas();
 
         var signaturePad = new SignaturePad(canvas, {
-            backgroundColor: 'rgb(255, 255, 255)' // necessary for saving image as JPEG; can be removed is only saving as PNG or SVG
+            backgroundColor: 'rgb(255, 255, 255)'
         });
 
         document.getElementById('save-jpeg').addEventListener('click', function() {
