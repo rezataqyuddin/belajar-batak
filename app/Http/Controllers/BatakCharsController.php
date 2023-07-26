@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use PhpParser\Node\Stmt\TryCatch;
 
 class BatakCharsController extends Controller
 {
@@ -41,13 +42,11 @@ class BatakCharsController extends Controller
     public function store(Request $request)
     {
         $file = $this->store_image($request['signed']);
-        return $this->predict($file);
+        // return $this->predict($file);
     }
 
     public function predict($file)
     {
-        // dd($file);
-
         $url = "localhost:8000/predict/image";
         $client = new Client();
 
@@ -57,7 +56,7 @@ class BatakCharsController extends Controller
                     'name'     => 'image',
                     'filename' => $file[1],
                     'Mime-Type' => "image/jpeg",
-                    'contents' => fopen(asset("/storage/img-uploads/".$file[0]), 'r'),
+                    'contents' => fopen($file[0], 'r'),
                 ],
             ]
         ]);
@@ -67,14 +66,18 @@ class BatakCharsController extends Controller
 
     public function store_image($imagedata)
     {
-        $folderPath = "storage/img-uploads/";
+        $folderPath = "img-uploads/";
         $image_parts = explode(";base64,", $imagedata);
         $image_base64 = base64_decode($image_parts[1]);
         $filename = uniqid() . '.' . "jpg";
         $file = $folderPath . $filename;
 
-        Storage::disk('local')->put($file,$image_base64);
+        if (!Storage::exists($folderPath)) {
+            Storage::makeDirectory($folderPath);
+        }
 
+        file_put_contents($file, $image_base64);
+        
         return array($file, $filename);
     }
 
