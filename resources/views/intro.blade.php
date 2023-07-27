@@ -78,9 +78,10 @@
 
         var signaturePad = new SignaturePad(canvas, {
             backgroundColor: 'rgb(255, 255, 255)',
-            penWidth: 100,
-            lineWidth : 100,
+            minWidth: 3,
+            maxWidth : 10,
             penCap : 'butt',
+            penColor : '#000000', 
         });
 
         document.getElementById('save-jpeg').addEventListener('click', function() {
