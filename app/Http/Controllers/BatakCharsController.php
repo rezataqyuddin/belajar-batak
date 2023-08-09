@@ -42,26 +42,25 @@ class BatakCharsController extends Controller
     public function store(Request $request)
     {
         $file = $this->store_image($request['signed']);
-        // return $this->predict($file);
+        return $this->predict($request['signed']);
     }
 
-    public function predict($file)
+    public function predict($imagestr)
     {
-        $url = "localhost:8000/predict/image";
+        $url = "localhost:8001/predict/image";
         $client = new Client();
 
-        $response = $client->post($url, [
-            'multipart' => [
-                [
-                    'name'     => 'image',
-                    'filename' => $file[1],
-                    'Mime-Type' => "image/jpeg",
-                    'contents' => fopen($file[0], 'r'),
-                ],
-            ]
+        $body = '{ "image_base64" : "'.$imagestr.'" }';
+        $response = $client->post($url,
+        [
+            'headers' => [
+                'Content-Type' => "application/json",
+                'Accept' => 'application/json'
+            ],
+            'body' => $body,
         ]);
 
-        return $response;
+        return $response->getBody()->getContents();
     }
 
     public function store_image($imagedata)
@@ -77,7 +76,7 @@ class BatakCharsController extends Controller
         }
 
         file_put_contents($file, $image_base64);
-        
+
         return array($file, $filename);
     }
 

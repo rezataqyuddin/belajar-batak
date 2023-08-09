@@ -34,71 +34,91 @@
             <br>
             <form method="POST" action="{{route('predict')}}">
                 @csrf
-                <div class="wrapper">
-                    <canvas id="signature-pad" class="signature-pad"></canvas>
+                <div class="wrapper border border-primary">
+                    <canvas id="signature-pad" class="container" height="250"></canvas>
                     <div id="data">
                     </div>
                 </div>
                 <br>
-                <button type="button" class="btn btn-info btn-sm" id="save-jpeg">Prepare</button>
-                <button type="submit">Simpan</button>
+                <button type="button" class="btn btn-success" id="check">Simpan</button>
             </form>
         </div>
     </div>
-    @endsection
+    <div class="modal fade" id="modal-result" tabindex="-1" aria-labelledby="modal-result" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" id="">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Hello</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Your Writing : <span id="predicted"></span><br>
+                    AI predict Confidence : <span id="confidence"></span>
+                </div>
+            </div>
+        </div>
+        @endsection
 
-    @section('js')
-    <style type="text/css">
-        .sigPad {
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 100%;
-            height: 260px;
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
-    <script>
-        var canvas = document.getElementById('signature-pad');
-
-        // Adjust canvas coordinate space taking into account pixel ratio,
-        // to make it look crisp on mobile devices.
-        // This also causes canvas to be cleared.
-        function resizeCanvas() {
-            // When zoomed out to less than 100%, for some very strange reason,
-            // some browsers report devicePixelRatio as less than 1
-            // and only part of the canvas is cleared then.
-            var ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = canvas.offsetHeight * ratio;
-            canvas.getContext("2d").scale(ratio, ratio);
-        }
-
-        window.onresize = resizeCanvas;
-        resizeCanvas();
-
-        var signaturePad = new SignaturePad(canvas, {
-            backgroundColor: 'rgb(255, 255, 255)',
-            minWidth: 3,
-            maxWidth : 10,
-            penCap : 'butt',
-            penColor : '#000000', 
-        });
-
-        document.getElementById('save-jpeg').addEventListener('click', function() {
-            if (signaturePad.isEmpty()) {
-                alert("Tanda Tangan Anda Kosong! Silahkan tanda tangan terlebih dahulu.");
-            } else {
-                var data = signaturePad.toDataURL('image/jpeg');
-                console.log(data);
-                $('#data').html('<h4>Format .JPEG</h4><img src="'+data+'"><textarea id="signature64" name="signed" style="display:none">'+data+'</textarea>');
+        @section('js')
+        <style type="text/css">
+            .sigPad {
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                width: 100%;
+                height: 260px;
             }
-        });
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+        <script>
+            $("#check").click(function() {
+                var data = signaturePad.toDataURL('image/jpeg');
+                $.ajax({
+                    contentType: "application/json",
+                    url: "http://127.0.0.1:8001/predict/image",
+                    type: "POST",
+                    dataType: 'json',
+                    data: JSON.stringify({
+                        "image_base64": data
+                    }),
+                    success: function(response) {
+                        console.log(response);
+                        $("#predicted").html(response.class);
+                        $("#confidence").html(response.confidence);
+                        var modal = new bootstrap.Modal(document.getElementById('modal-result'));
+                        modal.show();
+                    }
+                });
+            });
 
-        
-        document.getElementById('clear').addEventListener('click', function() {
-            signaturePad.clear();
-        });
+            var canvas = document.getElementById('signature-pad');
 
-    </script>
-    <script src="{{ url('/')}}/js/json2.min.js"></script>
-    @endsection
+            // Adjust canvas coordinate space taking into account pixel ratio,
+            // to make it look crisp on mobile devices.
+            // This also causes canvas to be cleared.
+            function resizeCanvas() {
+                // When zoomed out to less than 100%, for some very strange reason,
+                // some browsers report devicePixelRatio as less than 1
+                // and only part of the canvas is cleared then.
+                var ratio = Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+            }
+
+            window.onresize = resizeCanvas;
+            resizeCanvas();
+
+            var signaturePad = new SignaturePad(canvas, {
+                backgroundColor: 'rgb(255, 255, 255)',
+                minWidth: 3,
+                maxWidth: 10,
+                penCap: 'butt',
+                penColor: '#000000',
+            });
+
+            document.getElementById('clear').addEventListener('click', function() {
+                signaturePad.clear();
+            });
+        </script>
+        <script src="{{ url('/')}}/js/json2.min.js"></script>
+        @endsection
